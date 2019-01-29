@@ -37,6 +37,9 @@
  * min(int a, int b)
  */
 #include <Arduino.h>
+#ifndef min
+#define min _min
+#endif
 #define MPU9250
 #include "arduino_mpu9250_i2c.h"
 #include "arduino_mpu9250_clk.h"
