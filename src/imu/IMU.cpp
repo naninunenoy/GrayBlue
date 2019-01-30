@@ -10,7 +10,7 @@ namespace imu {
 
     IMU::~IMU() { }
 
-    bool IMU::Setup() {
+    bool IMU::Setup(unsigned short sampleRate) {
         if (dmp.begin() != INV_SUCCESS) {
             return false;
         }
@@ -19,12 +19,10 @@ namespace imu {
         dmp.setGyroFSR(2000);
         dmp.setAccelFSR(2);
         dmp.setLPF(5);
-        dmp.setSampleRate(10);
-        dmp.setCompassSampleRate(10);
+        dmp.setSampleRate(sampleRate);
+        dmp.setCompassSampleRate(sampleRate);
         // setpu dmp
-        dmp.dmpBegin(DMP_FEATURE_6X_LP_QUAT |
-                     DMP_FEATURE_GYRO_CAL,
-                     10);
+        dmp.dmpBegin(DMP_FEATURE_6X_LP_QUAT | DMP_FEATURE_GYRO_CAL, sampleRate);
         return true;
     }
 
@@ -39,6 +37,7 @@ namespace imu {
             return false;
         }
         // update data
+        dmp.update(UPDATE_ACCEL | UPDATE_GYRO | UPDATE_COMPASS);
         rawData.fromDMP(dmp);
         calcAccByDMP(dmp, acc);
         calcGyroByDMP(dmp, gyro);

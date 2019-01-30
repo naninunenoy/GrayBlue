@@ -9,27 +9,18 @@ class IMU {
 public:
     explicit IMU();
     ~IMU();
-    bool Setup();
+    bool Setup(unsigned short sampleRate);
     bool Update();
 
-    const unsigned long time() const { return dmp.time; }
-    const int* rawAcc() const { return rawData.acc; }
-    const int* rawGyro() const { return rawData.gyro; }
-    const int* rawMag() const { return rawData.mag; }
-    const long* rawDMPQuat() const { return rawData.dmpQuat; }
-    const float accX() const { return acc[0]; }
-    const float accY() const { return acc[1]; }
-    const float accZ() const { return acc[2]; }
-    const float gyroX() const { return gyro[0]; }
-    const float gyroY() const { return gyro[1]; }
-    const float gyroZ() const { return gyro[2]; }
-    const float magX() const { return mag[0]; }
-    const float magY() const { return mag[1]; }
-    const float magZ() const { return mag[2]; }
-    const float quatW() const { return quat[0]; }
-    const float quatX() const { return quat[1]; }
-    const float quatY() const { return quat[2]; }
-    const float quatZ() const { return quat[3]; }
+    const unsigned long getTime() const { return this->dmp.time; }
+    const int* getRawAcc() const { return this->rawData.acc; }
+    const int* getRawGyro() const { return this->rawData.gyro; }
+    const int* getRawMag() const { return this->rawData.mag; }
+    const long* getRawDMPQuat() const { return this->rawData.dmpQuat; }
+    const float* getAcc() const { return this->acc; }
+    const float* getGyro() const { return this->gyro; }
+    const float* getMag() const { return this->mag; }
+    const float* getQuat() const { return this->quat; }
 private:
     MPU9250_DMP dmp;
     DMPRawData rawData;
