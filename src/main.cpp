@@ -1,89 +1,77 @@
-/************************************************************
-MPU9250_DMP_Quaternion
- Quaternion example for MPU-9250 DMP Arduino Library 
-Jim Lindblom @ SparkFun Electronics
-original creation date: November 23, 2016
-https://github.com/sparkfun/SparkFun_MPU9250_DMP_Arduino_Library
+#include <M5Stack.h>
+#include "imu/IMU.h"
 
-The MPU-9250's digital motion processor (DMP) can calculate
-four unit quaternions, which can be used to represent the
-rotation of an object.
+#define SERIAL_PRINT 1
 
-This exmaple demonstrates how to configure the DMP to 
-calculate quaternions, and prints them out to the serial
-monitor. It also calculates pitch, roll, and yaw from those
-values.
+void printSerial(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
+void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
 
-Development environment specifics:
-Arduino IDE 1.6.12
-SparkFun 9DoF Razor IMU M0
+imu::IMU _imu;
 
-Supported Platforms:
-- ATSAMD21 (Arduino Zero, SparkFun SAMD21 Breakouts)
-*************************************************************/
-#include <SparkFunMPU9250-DMP.h>
-
-#define SerialPort Serial
-void printIMUData(void);
-
-MPU9250_DMP imu;
-
-void setup() 
-{
-  SerialPort.begin(115200);
-
-  // Call imu.begin() to verify communication and initialize
-  if (imu.begin() != INV_SUCCESS)
-  {
-    while (1)
-    {
-      SerialPort.println("Unable to communicate with MPU-9250");
-      SerialPort.println("Check connections, and try again.");
-      SerialPort.println();
-      delay(5000);
+void setup() {
+    M5.begin();
+    M5.Lcd.fillScreen(BLACK);
+    M5.Lcd.setTextColor(GREEN ,BLACK);
+    M5.Lcd.setCursor(0, 0);
+    M5.Lcd.println("awaken...");
+    if (Wire.begin()) {
+        M5.Lcd.println("i2c OK!");
+    } else {
+        M5.Lcd.println("i2c NG!!!");
     }
-  }
-  
-  imu.dmpBegin(DMP_FEATURE_6X_LP_QUAT | // Enable 6-axis quat
-               DMP_FEATURE_GYRO_CAL, // Use gyro calibration
-              10); // Set DMP FIFO rate to 10 Hz
-  // DMP_FEATURE_LP_QUAT can also be used. It uses the 
-  // accelerometer in low-power mode to estimate quat's.
-  // DMP_FEATURE_LP_QUAT and 6X_LP_QUAT are mutually exclusive
-}
-
-void loop() 
-{
-  // Check for new data in the FIFO
-  if ( imu.fifoAvailable() )
-  {
-    // Use dmpUpdateFifo to update the ax, gx, mx, etc. values
-    if ( imu.dmpUpdateFifo() == INV_SUCCESS)
-    {
-      // computeEulerAngles can be used -- after updating the
-      // quaternion values -- to estimate roll, pitch, and yaw
-      imu.computeEulerAngles();
-      printIMUData();
+    if (_imu.Setup(50)) { // 50Hz
+        M5.Lcd.println("imu OK!");
+    } else {
+        M5.Lcd.println("imu NG!!!");
     }
-  }
+#if SERIAL_PRINT
+    Serial.begin(115200);
+    Serial.println("serial OK!");
+    M5.Lcd.println("serial OK!");
+#endif
+    M5.Lcd.fillScreen(BLACK);
 }
 
-void printIMUData(void)
-{  
-  // After calling dmpUpdateFifo() the ax, gx, mx, etc. values
-  // are all updated.
-  // Quaternion values are, by default, stored in Q30 long
-  // format. calcQuat turns them into a float between -1 and 1
-  float q0 = imu.calcQuat(imu.qw);
-  float q1 = imu.calcQuat(imu.qx);
-  float q2 = imu.calcQuat(imu.qy);
-  float q3 = imu.calcQuat(imu.qz);
-
-  SerialPort.println("Q: " + String(q0, 4) + ", " +
-                    String(q1, 4) + ", " + String(q2, 4) + 
-                    ", " + String(q3, 4));
-  SerialPort.println("R/P/Y: " + String(imu.roll) + ", "
-            + String(imu.pitch) + ", " + String(imu.yaw));
-  SerialPort.println("Time: " + String(imu.time) + " ms");
-  SerialPort.println();
+void loop() {
+    if (_imu.Update()) {
+#if SERIAL_PRINT
+        printSerial(_imu.getTime(), _imu.getAcc(), _imu.getGyro(), _imu.getMag(), _imu.getQuat());
+#endif
+        printLcd(_imu.getTime(), _imu.getAcc(), _imu.getGyro(), _imu.getMag(), _imu.getQuat());
+    }
 }
+
+void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]) {
+  M5.Lcd.setCursor(0, 0);
+  M5.Lcd.print("     x       y       z ");
+  M5.Lcd.setCursor(0,  24);
+  M5.Lcd.printf("% 6d  % 6d  % 6d     mg   \r\n",  (int)(1000*a[0]), (int)(1000*a[1]), (int)(1000*a[2]));
+  M5.Lcd.setCursor(0,  44);
+  M5.Lcd.printf("% 6d  % 6d  % 6d     o/s  \r\n", (int)(g[0]), (int)(g[1]), (int)(g[2]));
+  M5.Lcd.setCursor(0,  64);
+  M5.Lcd.printf("% 6d  % 6d  % 6d     mG    \r\n",  (int)(m[0]), (int)(m[1]), (int)(m[2]));
+
+  M5.Lcd.setCursor(0,  100);
+  M5.Lcd.print("   qw      qx      qy      qz ");
+  M5.Lcd.setCursor(0,  128);
+  M5.Lcd.printf(" %2.3f  % 2.3f  %2.3f  %2.3f   \r\n", q[0], q[1], q[2], q[3]);
+}
+
+#if SERIAL_PRINT
+void printSerial(unsigned long t, const float a[], const float g[], const float m[], const float q[]) {
+    Serial.print(t); Serial.print(",");
+    Serial.print(a[0], 3); Serial.print(",");
+    Serial.print(a[1], 3); Serial.print(",");
+    Serial.print(a[2], 3); Serial.print(",");
+    Serial.print(g[0], 3); Serial.print(",");
+    Serial.print(g[1], 3); Serial.print(",");
+    Serial.print(g[2], 3); Serial.print(",");
+    Serial.print(m[0], 3); Serial.print(",");
+    Serial.print(m[1], 3); Serial.print(",");
+    Serial.print(m[2], 3); Serial.print(",");
+    Serial.print(q[0], 3); Serial.print(",");
+    Serial.print(q[1], 3); Serial.print(",");
+    Serial.print(q[2], 3); Serial.print(",");
+    Serial.print(q[3], 3); Serial.println();
+}
+#endif
