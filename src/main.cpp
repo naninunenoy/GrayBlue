@@ -1,5 +1,7 @@
 #include <M5Stack.h>
 #include "imu/IMU.h"
+#include "ble/BLE.h"
+#include "ble/BLEData.h"
 #include "input/ButtonCheck.h"
 
 #define SERIAL_PRINT 1
@@ -8,6 +10,7 @@ void printSerial(unsigned long t, const float a[], const float g[], const float 
 void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
 
 imu::IMU _imu;
+ble::BLE _ble;
 input::ButtonCheck _button;
 
 void setup() {
@@ -26,8 +29,13 @@ void setup() {
     } else {
         M5.Lcd.println("imu NG!!!");
     }
+    if (_ble.Initialize() && _ble.Start()) { // 50Hz
+        M5.Lcd.println("ble OK!");
+    } else {
+        M5.Lcd.println("ble NG!!!");
+    }
 #if SERIAL_PRINT
-    Serial.begin(115200);
+    //Serial.begin(115200);
     Serial.println("serial OK!");
     M5.Lcd.println("serial OK!");
 #endif
@@ -37,13 +45,22 @@ void setup() {
 void loop() {
     // Button condition
     if (_button.containsUpdate(M5)) {
+        auto bleCh = _ble.GetButtonCharacteristic();
         for (int i = 0; i < INPUT_BTN_NUM; i++) {
             input::Btn btn = input::AllBtns[i];
             if (_button.isBtnUpdate(btn)) {
                 input::BtnState btnState = _button.getBtnState(btn);
+                uint8_t btnCode = input::toBtnCode(btn);
+                uint8_t btnPress = input::toBtnPress(btnState);
 #if SERIAL_PRINT
-                Serial.print(btn); Serial.print(" "); Serial.println(btnState);
+                Serial.print(btnCode); Serial.print(" "); Serial.println(btnPress);
 #endif
+                ble::ButtonData data;
+                data.data.btnCode = btnCode;
+                data.data.btnPress = btnPress;
+                data.data.pressTime = 0;
+                bleCh.setValue(data.rawData, BLE_BUTTON_DATA_LEN);
+                bleCh.notify();
             }
         }
     }

@@ -1,4 +1,4 @@
-#ifndef __IMU_IMU_H // 先頭
+#ifndef __IMU_IMU_H
 #define __IMU_IMU_H 
 
 #include <SparkFunMPU9250-DMP.h>

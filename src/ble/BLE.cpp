@@ -3,9 +3,15 @@
 
 namespace ble {
 
-    BLE::BLE() { }
+    BLE::BLE() { 
+        descripter = new BLE2902();
+        serverCallback = new MyServerCallbacks();
+        buttonOperarionCharacteristicCallback = new MyCharacteristicCallbacks();
+    }
 
     BLE::~BLE() { 
+        delete buttonOperarionCharacteristicCallback;
+        delete serverCallback;
         delete descripter;
         delete advertising;
         delete buttonOperarionCharacteristic;
@@ -14,24 +20,27 @@ namespace ble {
         delete server;
     }
 
-    void BLE::Initialize() {
+    bool BLE::Initialize() {
         BLEDevice::init("M5Stack");
         // create server
         server = BLEDevice::createServer();
+        server->setCallbacks(serverCallback);
         // create service
         buttonService = server->createService(profiles::services::Button);
         buttonOperarionCharacteristic = buttonService->createCharacteristic(
             profiles::characteristics::ButtonOperation,
             BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
         // set descripter
-        descripter = new BLE2902();
         buttonOperarionCharacteristic->addDescriptor(descripter);
+        buttonOperarionCharacteristic->setCallbacks(buttonOperarionCharacteristicCallback);
+        return true;
     }
 
-    void BLE::Start() {
+    bool BLE::Start() {
         buttonService->start();
         advertising = server->getAdvertising();
         advertising->addServiceUUID(profiles::services::Button);
         advertising->start();
+        return true;
     }
 }

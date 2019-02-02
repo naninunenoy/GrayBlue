@@ -8,12 +8,23 @@
 #include <BLE2902.h>
 
 namespace ble {
+
+class MyServerCallbacks: public BLEServerCallbacks {
+    void onConnect(BLEServer* pServer) { /* Do Nothing */ };
+    void onDisconnect(BLEServer* pServer) { /* Do Nothing */ }
+};
+
+class MyCharacteristicCallbacks: public BLECharacteristicCallbacks {
+    void onRead(BLECharacteristic *pCharacteristic) { /* Do Nothing */ }
+    void onWrite(BLECharacteristic *pCharacteristic) { /* Do Nothing */ }
+};
+
 class BLE {
 public:
     explicit BLE();
     ~BLE();
-    void Initialize();
-    void Start();
+    bool Initialize();
+    bool Start();
     BLECharacteristic& GetButtonCharacteristic() const { return *buttonOperarionCharacteristic; }
 private:
     BLEServer* server;
@@ -21,6 +32,8 @@ private:
     BLECharacteristic* buttonOperarionCharacteristic;
     BLEAdvertising* advertising;
     BLEDescriptor* descripter;
+    MyServerCallbacks* serverCallback;
+    MyCharacteristicCallbacks* buttonOperarionCharacteristicCallback;
 };
 
 }

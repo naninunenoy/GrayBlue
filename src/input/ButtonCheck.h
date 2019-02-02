@@ -4,7 +4,6 @@
 #include <M5Stack.h>
 #include <map>
 
-
 namespace input {
 enum Btn { BtnA = 0x01, BtnB = 0x02, BtnC = 0x04 };
 enum BtnState { BtnStateRelease = 0, BtnStatePress = 1,  };
@@ -25,6 +24,22 @@ private:
     BtnState getCurrentDeviceBtnState(Btn of, M5Stack& device) const;
     std::map<Btn, BtnState> buttonStateMap;
 }; // Button
+
+inline uint8_t toBtnCode(Btn btn) {
+    switch (btn) {
+    case BtnA: return 'A';
+    case BtnB: return 'B';
+    case BtnC: return 'C';
+    }
+    return '?';
+}
+
+inline uint8_t toBtnPress(BtnState btn) {
+    if (btn == BtnStatePress) {
+        return 1;
+    }
+    return 0;
+}
 
 } // input
 
