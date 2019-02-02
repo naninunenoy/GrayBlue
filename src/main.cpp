@@ -45,7 +45,6 @@ void setup() {
 void loop() {
     // Button condition
     if (_button.containsUpdate(M5)) {
-        auto bleCh = _ble.GetButtonCharacteristic();
         for (int i = 0; i < INPUT_BTN_NUM; i++) {
             input::Btn btn = input::AllBtns[i];
             if (_button.isBtnUpdate(btn)) {
@@ -56,11 +55,11 @@ void loop() {
                 Serial.print(btnCode); Serial.print(" "); Serial.println(btnPress);
 #endif
                 ble::ButtonData data;
-                data.data.btnCode = btnCode;
-                data.data.btnPress = btnPress;
-                data.data.pressTime = 0;
-                bleCh.setValue(data.rawData, BLE_BUTTON_DATA_LEN);
-                bleCh.notify();
+                data.btnCode = btnCode;
+                data.btnPress = btnPress;
+                data.pressTime = 0;
+                _ble.GetButtonCharacteristic().setValue((uint8_t*)&data, BLE_BUTTON_DATA_LEN);
+                _ble.GetButtonCharacteristic().notify();
             }
         }
     }
