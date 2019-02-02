@@ -2,25 +2,27 @@
 
 namespace input {
     ButtonCheck::ButtonCheck() {
-        buttonStateMap.insert(std::make_pair(BtnA, BtnStateRelease));
-        buttonStateMap.insert(std::make_pair(BtnB, BtnStateRelease));
-        buttonStateMap.insert(std::make_pair(BtnC, BtnStateRelease));
+        updateFlag = 0;
+        for(int i = 0; i < INPUT_BTN_NUM; i++) {
+            buttonStateMap.insert(std::make_pair(AllBtns[i], BtnStateRelease));
+        }
     }
 
     ButtonCheck::~ButtonCheck() { }
 
-    bool ButtonCheck::update(M5Stack& runningDevice, uint8_t& updated) {
-        updated = 0;
-        if (checkButton(BtnA, runningDevice)) {
-            updated |= BtnA;
+    bool ButtonCheck::containsUpdate(M5Stack& runningDevice) {
+        updateFlag = 0;
+        for(int i = 0; i < INPUT_BTN_NUM; i++) {
+            Btn btn = AllBtns[i];
+            if (checkButton(btn, runningDevice)) {
+                updateFlag |= btn;
+            }
         }
-        if (checkButton(BtnB, runningDevice)) {
-            updated |= BtnB;
-        }
-        if (checkButton(BtnC, runningDevice)) {
-            updated |= BtnC;
-        }
-        return updated != 0;
+        return updateFlag != 0;
+    }
+
+    bool ButtonCheck::isBtnUpdate(Btn of) const {
+        return (updateFlag & of) != 0;
     }
 
     BtnState ButtonCheck::getBtnState(Btn of) const { 

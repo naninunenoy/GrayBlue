@@ -1,5 +1,6 @@
 #include <M5Stack.h>
 #include "imu/IMU.h"
+#include "input/ButtonCheck.h"
 
 #define SERIAL_PRINT 1
 
@@ -7,6 +8,7 @@ void printSerial(unsigned long t, const float a[], const float g[], const float 
 void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
 
 imu::IMU _imu;
+input::ButtonCheck _button;
 
 void setup() {
     M5.begin();
@@ -33,12 +35,27 @@ void setup() {
 }
 
 void loop() {
+    // Button condition
+    if (_button.containsUpdate(M5)) {
+        for (int i = 0; i < INPUT_BTN_NUM; i++) {
+            input::Btn btn = input::AllBtns[i];
+            if (_button.isBtnUpdate(btn)) {
+                input::BtnState btnState = _button.getBtnState(btn);
+#if SERIAL_PRINT
+                Serial.print(btn); Serial.print(" "); Serial.println(btnState);
+#endif
+            }
+        }
+    }
+    // IMU condition
     if (_imu.Update()) {
 #if SERIAL_PRINT
         printSerial(_imu.getTime(), _imu.getAcc(), _imu.getGyro(), _imu.getMag(), _imu.getQuat());
 #endif
         printLcd(_imu.getTime(), _imu.getAcc(), _imu.getGyro(), _imu.getMag(), _imu.getQuat());
     }
+     // device update
+    M5.update();
 }
 
 void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]) {
@@ -59,6 +76,7 @@ void printLcd(unsigned long t, const float a[], const float g[], const float m[]
 
 #if SERIAL_PRINT
 void printSerial(unsigned long t, const float a[], const float g[], const float m[], const float q[]) {
+    return;
     Serial.print(t); Serial.print(",");
     Serial.print(a[0], 3); Serial.print(",");
     Serial.print(a[1], 3); Serial.print(",");
