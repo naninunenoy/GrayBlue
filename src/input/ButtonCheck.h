@@ -18,11 +18,14 @@ public:
     bool containsUpdate(M5Stack& runningDevice);
     bool isBtnUpdate(Btn of) const;
     BtnState getBtnState(Btn of) const;
+    uint32_t getBtnPressTime(Btn of) const;
 private:
     uint8_t updateFlag;
-    bool checkButton(Btn of, M5Stack& device);
+    bool isButtonStateChanged(Btn of, BtnState ithink, M5Stack& device);
     BtnState getCurrentDeviceBtnState(Btn of, M5Stack& device) const;
     std::map<Btn, BtnState> buttonStateMap;
+    std::map<Btn, uint32_t> buttonPressStartTimeMap;
+    std::map<Btn, uint32_t> buttonPressTimeMap;
 }; // Button
 
 inline uint8_t toBtnCode(Btn btn) {

@@ -51,13 +51,16 @@ void loop() {
                 input::BtnState btnState = _button.getBtnState(btn);
                 uint8_t btnCode = input::toBtnCode(btn);
                 uint8_t btnPress = input::toBtnPress(btnState);
+                uint32_t btnPressTime = (btnPress == 0) ? _button.getBtnPressTime(btn) : 0;
 #if SERIAL_PRINT
-                Serial.print(btnCode); Serial.print(" "); Serial.println(btnPress);
+                Serial.print(btnCode); Serial.print(" "); 
+                Serial.print(btnPress); Serial.print(" "); 
+                Serial.println(btnPressTime);
 #endif
                 ble::ButtonData data;
                 data.btnCode = btnCode;
                 data.btnPress = btnPress;
-                data.pressTime = 0;
+                data.pressTime = (uint16_t)btnPressTime;
                 _ble.GetButtonCharacteristic().setValue((uint8_t*)&data, BLE_BUTTON_DATA_LEN);
                 _ble.GetButtonCharacteristic().notify();
             }
