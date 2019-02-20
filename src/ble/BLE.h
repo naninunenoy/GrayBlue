@@ -2,8 +2,8 @@
 #define __BLE_BLE_H
 
 #include <BLEDevice.h>
-#include <BLEUtils.h>
 #include <BLEServer.h>
+#include "BLEServiceSet.h"
 
 namespace ble {
 
@@ -13,11 +13,12 @@ public:
     ~BLE();
     bool Initialize();
     bool Start();
-    BLECharacteristic& GetButtonCharacteristic() const { return *buttonOperarionCharacteristic; }
+    BLECharacteristic& GetButtonCharacteristic() const;
+    BLECharacteristic& GetNineAxisCharacteristic() const;
 private:
     BLEServer* server;
-    BLEService* buttonService;
-    BLECharacteristic* buttonOperarionCharacteristic;
+    BLEServiceSet* buttonSet;
+    BLEServiceSet* nineAxisSet;
     BLEAdvertising* advertising;
     BLEDescriptor* descripter;
 };

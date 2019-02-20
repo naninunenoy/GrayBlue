@@ -68,6 +68,13 @@ void loop() {
     }
     // IMU condition
     if (_imu.Update()) {
+        ble::IMUData data;
+        memcpy(&data.accX, _imu.getAcc(), sizeof(float)*3);
+        memcpy(&data.gyroX, _imu.getGyro(), sizeof(float)*3);
+        memcpy(&data.magX, _imu.getMag(), sizeof(float)*3);
+        memcpy(&data.quatW, _imu.getQuat(), sizeof(float)*4);
+        _ble.GetNineAxisCharacteristic().setValue((uint8_t*)&data, BLE_IMU_DATA_LEN);
+        _ble.GetNineAxisCharacteristic().notify();
 #if SERIAL_PRINT
         printSerial(_imu.getTime(), _imu.getAcc(), _imu.getGyro(), _imu.getMag(), _imu.getQuat());
 #endif

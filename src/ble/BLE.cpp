@@ -4,36 +4,57 @@
 
 namespace ble {
 
-    BLE::BLE() {  }
+    BLE::BLE() { }
 
     BLE::~BLE() { 
-        delete descripter;
-        delete advertising;
-        delete buttonOperarionCharacteristic;
-        delete buttonService;
-        delete server;
+        delete this->descripter;
+        delete this->advertising;
+        delete this->nineAxisSet;
+        delete this->buttonSet;
+        delete this->server;
     }
 
     bool BLE::Initialize() {
         BLEDevice::init("M5Stack");
         // create server
-        server = BLEDevice::createServer();
+        this->server = BLEDevice::createServer();
+        this->descripter = new BLE2902();
         // create service
-        buttonService = server->createService(profiles::services::Button);
-        buttonOperarionCharacteristic = buttonService->createCharacteristic(
-            profiles::characteristics::ButtonOperation,
-            BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
-        // set descripter
-        descripter = new BLE2902();
-        buttonOperarionCharacteristic->addDescriptor(descripter);
+        this->buttonSet = new BLEServiceSet(this->server);
+        this->buttonSet->CreateService(
+            profiles::services::Button,
+            new const char*[1] { profiles::characteristics::ButtonOperation },
+            1,
+            this->descripter
+        );
+        this->nineAxisSet = new BLEServiceSet(this->server);
+        this->nineAxisSet->CreateService(
+            profiles::services::NineAxis,
+            new const char*[1] { profiles::characteristics::NineAxisData },
+            1,
+            this->descripter
+        );
+        // create advertising
+        this->advertising = this->server->getAdvertising();
+        this->advertising->addServiceUUID(profiles::services::Button);
+        this->advertising->addServiceUUID(profiles::services::NineAxis);
         return true;
     }
 
     bool BLE::Start() {
-        buttonService->start();
-        advertising = server->getAdvertising();
-        advertising->addServiceUUID(profiles::services::Button);
-        advertising->start();
+        this->buttonSet->StartService();
+        this->nineAxisSet->StartService();
+        this->advertising->start();
         return true;
+    }
+
+    BLECharacteristic& BLE::GetButtonCharacteristic() const {
+        return *(this->buttonSet->GetCharacteristicOf(
+            profiles::characteristics::ButtonOperation)); 
+    }
+
+    BLECharacteristic& BLE::GetNineAxisCharacteristic() const {
+        return *(this->nineAxisSet->GetCharacteristicOf(
+            profiles::characteristics::NineAxisData)); 
     }
 }
