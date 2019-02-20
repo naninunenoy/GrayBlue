@@ -13,8 +13,7 @@ public:
     ~BLEServiceSet();
     bool CreateService(const char* serviceProfile, 
                        const char** characteristicProfiles, 
-                       int characteristicProfileCount,
-                       BLEDescriptor* descripter);
+                       int characteristicProfileCount);
     void StartService() { bleService->start(); }
     void StopService() { bleService->stop(); }
     BLECharacteristic* GetCharacteristicOf(const char* of) const;
@@ -22,6 +21,7 @@ private:
     BLEServer& bleServer;
     BLEService* bleService;
     std::map<const char*, BLECharacteristic*> bleCharacteristicMap;
+    std::map<const char*, BLEDescriptor*> bleDescriptorMap;
 };
 
 }

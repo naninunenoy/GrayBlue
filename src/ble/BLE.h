@@ -20,7 +20,6 @@ private:
     BLEServiceSet* buttonSet;
     BLEServiceSet* nineAxisSet;
     BLEAdvertising* advertising;
-    BLEDescriptor* descripter;
 };
 
 }
