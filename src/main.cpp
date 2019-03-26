@@ -20,6 +20,7 @@ void setup() {
     M5.Lcd.setCursor(0, 0);
     M5.Lcd.println("awaken...");
     if (Wire.begin()) {
+        Wire.setClock(400000UL); // i2c 400kHz
         M5.Lcd.println("i2c OK!");
     } else {
         M5.Lcd.println("i2c NG!!!");
