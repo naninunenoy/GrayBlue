@@ -4,7 +4,7 @@
 #include "ble/BLEData.h"
 #include "input/ButtonCheck.h"
 
-#define SERIAL_PRINT 1
+#define SERIAL_PRINT 0
 
 void printSerial(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
 void printLcd(unsigned long t, const float a[], const float g[], const float m[], const float q[]);
