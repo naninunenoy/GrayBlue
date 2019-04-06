@@ -56,7 +56,7 @@ Above data are notified by BLE Gatt.
        - pressTime [2:3] (milliSeconds. On button press, value=`0`.)
 
 ## Demo
-TBD
+<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/demo.gif" width="200" />
 
 ## Install
 This project use [PlatformIO](https://platformio.org/).
