@@ -68,8 +68,10 @@ If you try to build and write to your M5Stack Gray, you need to install Platform
 ## Library
  * M5Stack
     - https://github.com/m5stack/M5Stack
+    - [LICENSE](https://github.com/m5stack/M5Stack/blob/master/LICENSE)
  * SparkFun_MPU-9250-DMP_Arduino_Library
     - https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library
+    - [LICENSE](https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library/blob/master/LICENSE.md)
 
 ## Licence
 [MIT](https://github.com/naninunenoy/GrayBlue/blob/master/LICENSE)
