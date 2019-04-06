@@ -1,7 +1,11 @@
-GrayBlue
+GrayBlue 
 ====
 
+<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/icon.png" width="200" />
+
 This is M5Stack **Gray** firmware to notify 9DOF motion sensor(MPU-9250) data by **Blue**tooth Low Enagy.
+
+Therefore <img src="https://img.shields.io/badge/Gray-Blue-blue.svg?labelColor=lightGray" />.
 
 ## Description
 
@@ -16,16 +20,16 @@ Quaternion is calculated from acc and gyro by DMP of MPU-9250.
 These 13(3+3+3+4) data are notified by BLE.
 
 ### Front 3 buttons
-Pushing or release of 3 buttons on front of M5Stack is also notified by BLE.
+Press or release 3 buttons on front is also notified by BLE.
 
 ### BLE
-Any data are notified by Gatt profile.
+Above data are notified by BLE Gatt.
 
-#### 9-DOF data
+#### 9-DOF data profile
  * Service UUID: `c87ace96-3523-11e9-b210-d663bd873d93`
  * Characteristics 
     - UUID: `c87ad148-3523-11e9-b210-d663bd873d93`
-    - type: 52 byte binary data. (13 `float` value)
+    - type: 52 byte binary array. (13 `float` value)
     - format: 
        - accX [0:3]
        - accY [4:7]
@@ -41,20 +45,22 @@ Any data are notified by Gatt profile.
        - quatY [44:47]
        - quatZ [48:51]
 
-#### Button event
+#### Button event profile
  * Service UUID: `de4c3b20-26ea-11e9-ab14-d663bd873d93`
  * Characteristics 
     - UUID: `de4c4016-26ea-11e9-ab14-d663bd873d93`
     - type: 4 byte value
     - format:
-       - isPressed [0] (onPress=`1`/onRelease=`0`)
+       - isPressed [0] (pressed=`1`/release=`0`)
        - buttonType [1] (left=`'A'`/center=`'B'`/right=`'C'`)
-       - pressTime [2:3] (unit is [ms]. On button press, this value is `0`)
+       - pressTime [2:3] (milliSeconds. On button press, value=`0`.)
 
 ## Demo
+TBD
 
 ## Install
 This project use [PlatformIO](https://platformio.org/).
+
 If you try to build and write to your M5Stack Gray, you need to install PlatformIO environment on your PC.
 
 ## Library
@@ -67,4 +73,4 @@ If you try to build and write to your M5Stack Gray, you need to install Platform
 MIT
 
 ## Author
-naninunenoy 
+[@naninunenoy](https://github.com/naninunenoy)
