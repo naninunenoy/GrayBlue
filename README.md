@@ -56,6 +56,8 @@ Above data are notified by BLE Gatt.
        - pressTime [2:3] (milliSeconds. On button press, value=`0`.)
 
 ## Demo
+Applied the notified quaternion to the virtual object with Unity.
+
 <img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/demo.gif" width="200" />
 
 ## Install
@@ -70,7 +72,7 @@ If you try to build and write to your M5Stack Gray, you need to install Platform
     - https://github.com/sparkfun/SparkFun_MPU-9250-DMP_Arduino_Library
 
 ## Licence
-MIT
+[MIT](https://github.com/naninunenoy/GrayBlue/blob/doc/LICENSE)
 
 ## Author
 [@naninunenoy](https://github.com/naninunenoy)
