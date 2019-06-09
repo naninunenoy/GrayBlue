@@ -1,11 +1,16 @@
 GrayBlue 
 ====
 
-<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/icon.png" width="200" />
+<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/icon.png?raw=true" width="200" />
 
 This is M5Stack **Gray** firmware to notify 9DOF motion sensor(MPU-9250) data by **Blue**tooth Low Enagy.
 
 Therefore <img src="https://img.shields.io/badge/Gray-Blue-blue.svg?labelColor=lightGray" />.
+
+## Demo
+Applied the notified quaternion to the virtual object with Unity.
+
+<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/demo.gif?raw=true" width="200" />
 
 ## Description
 
@@ -54,11 +59,6 @@ Above data are notified by BLE Gatt.
        - isPressed [0] (pressed=`1`/release=`0`)
        - buttonType [1] (left=`'A'`/center=`'B'`/right=`'C'`)
        - pressTime [2:3] (milliSeconds. On button press, value=`0`.)
-
-## Demo
-Applied the notified quaternion to the virtual object with Unity.
-
-<img src="https://github.com/naninunenoy/GrayBlue/blob/doc/doc/demo.gif" width="200" />
 
 ## Install
 This project use [PlatformIO](https://platformio.org/).
